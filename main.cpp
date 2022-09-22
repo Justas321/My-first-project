@@ -9,7 +9,7 @@ struct duom{
 
 duom ivedimas(int &n);
 void isvedimas(duom laikinas, int n);
-void mediana(duom temp, int n);
+void rusiavimas(duom temp, int n);
 
 int main(){
   duom asmuo1, masyvas[25];
@@ -26,8 +26,9 @@ duom ivedimas(int &n){
     cout<<"Iveskite varda: "; cin>>studentas.vardas;
     cout<<"Iveskite pavarde: "; cin>>studentas.pavarde;
     srand(time(NULL));
-    cout<<"Iveskite egzamino bala(Jei norite sugeneruoti atsitiktini egzamino bala, iveskite 20) : "; cin>>studentas.egzaminas;
-    if(studentas.egzaminas==20)studentas.egzaminas=1+(rand()%10);
+    cout<<"Iveskite egzamino bala(Jei norite sugeneruoti atsitiktini egzamino bala, iveskite 11) : "; cin>>studentas.egzaminas;
+    while(studentas.egzaminas>11 || studentas.egzaminas<0){cout<<"Iveskite skaiciu nuo 1 iki 10, arba iveskite 11, jei norite bala sugeneruoti atsitiktinai "<<endl; cin>>studentas.egzaminas;}
+    if(studentas.egzaminas==11)studentas.egzaminas=1+(rand()%10);
 
   //---- Dinaminis C masyvas
 
@@ -36,13 +37,17 @@ duom ivedimas(int &n){
     else {
         n=0;
         for(int kint=0;kint<20;kint++){
-            cout<<"Iveskite "<<kint+1<<" semestro pazymi(Jei suvedete visus pazymius, iveskite 0): ";
+            cout<<"Iveskite "<<kint+1<<" semestro pazymi(Jei suvedete visus pazymius, iveskite 11, o jeigu norite pazymi sugeneruoti atsitiktinai iveskite 12): ";
             cin>>p[kint];
-            if(p[kint]==0)break;
+            while(p[kint]>12 || p[kint]<0){cout<<"Iveskite skaiciu nuo 1 iki 10, arba iveskite 11, jei suvedete visus pazymius, jeigu norite pazymi generuoti atsitiktinai iveskite 12 "<<endl; cin>>p[kint];}
+            if(p[kint]==11)break;
+            else if(p[kint]==12){
+                studentas.pazymiai[kint]=1+(rand()%10);
+        }
             else{
                 studentas.pazymiai[kint]=p[kint];
-                n++;
     }
+    n++;
   }
   }*/
     /*cout<<"Iveskite semestro pazymiu kieki:"; cin>>n;
@@ -56,10 +61,11 @@ duom ivedimas(int &n){
     v.reserve(50);
     n=0;
     for(int kint=0;kint<20;kint++){
-        cout<<"Iveskite semestro pazymi(Jei suvedete visus pazymius, iveskite 11, o jeigu norite pazymi sugeneruoti atsitiktinai iveskite 20): ";
+        cout<<"Iveskite "<<kint+1<<" semestro pazymi(Jei suvedete visus pazymius, iveskite 11, o jeigu norite pazymi sugeneruoti atsitiktinai iveskite 12): ";
         cin>>v[kint];
+        while(v[kint]>12 || v[kint]<0){cout<<"Iveskite skaiciu nuo 1 iki 10, arba iveskite 11, jei suvedete visus pazymius, jeigu norite pazymi generuoti atsitiktinai iveskite 12 "<<endl; cin>>v[kint];}
         if(v[kint]==11)break;
-        else if(v[kint]==20){
+        else if(v[kint]==12){
             studentas.pazymiai[kint]=1+(rand()%10);
         }
         else{
@@ -73,8 +79,7 @@ duom ivedimas(int &n){
     return studentas;
 }
 
-void mediana(duom temp,int n){
-    int N = sizeof(temp.pazymiai)/sizeof(temp.pazymiai[0]);
+void rusiavimas(duom temp,int n){
     sort(temp.pazymiai,temp.pazymiai+n);
 }
 
@@ -86,7 +91,7 @@ void isvedimas(duom laikinas, int n){
     int suma = 0;
     for(int i=0;i<n;i++) suma = suma + laikinas.pazymiai[i];
     cout<<fixed<<setprecision(2)<<setw(20)<<left<<0.4*suma/n+0.6*laikinas.egzaminas;
-    mediana(laikinas,n);
+    rusiavimas(laikinas,n);
     if(n%2!=0)cout<<fixed<<setprecision(2)<<setw(23)<<left<<laikinas.pazymiai[(n-1)/2]<<endl;
     else cout<<fixed<<setprecision(2)<<setw(23)<<left<<(laikinas.pazymiai[n/2-1]+laikinas.pazymiai[n/2])/2<<endl;
 }
