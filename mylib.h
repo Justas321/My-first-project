@@ -1,3 +1,6 @@
+#ifndef MYLIB_H_INCLUDED
+#define MYLIB_H_INCLUDED
+
 #include <bits/stdc++.h>
 #include <cstdio>
 #include <cstdlib>
@@ -24,3 +27,5 @@ using std::istream_iterator;
 using std::distance;
 using std::stringstream;
 using std::exception;
+
+#endif // MYLIB_H_INCLUDED
