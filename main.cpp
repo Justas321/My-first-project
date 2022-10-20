@@ -13,7 +13,7 @@ int main()
     cin>>tikrinimas;
   }
     int dydis = 1000;
-    while(dydis <= 10000){
+    while(dydis <= 10000000){
         string pavadinimas = "studentai" + to_string(dydis) + ".txt";
         string varg_isv = "vargsiukai" + to_string(dydis) + ".txt";
         string galv_isv = "galvociai" + to_string(dydis) + ".txt";
