@@ -8,6 +8,8 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
+#include <stdlib.h>
+#include <chrono>
 
 using std::cout;
 using std::cin;
@@ -27,5 +29,6 @@ using std::istream_iterator;
 using std::distance;
 using std::stringstream;
 using std::exception;
+using std::to_string;
 
 #endif // MYLIB_H_INCLUDED

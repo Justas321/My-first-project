@@ -12,7 +12,8 @@ struct duom {
 };
 
 double vid_med (char tikrinimas, vector <duom> stud, int laikinas, int kiek);
-void Nuskaitymas(vector <duom> &stud, int &kiek, char tikrinimas);
-void Isvedimas(vector <duom> stud, int kiek, char tikrinimas);
+void Nuskaitymas(vector <duom> &stud, int &kiek, string pavadinimas, char tikrinimas);
+void Isvedimas(vector <duom> stud, int kiek, string pavadinimas_isv ,char tikrinimas);
+void Generavimas(int dydis, string pavadinimas);
 bool Palyginimas(duom pirmas, duom antras);
 #endif // STRUC_H_INCLUDED

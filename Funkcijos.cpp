@@ -31,13 +31,14 @@ double vid_med (char tikrinimas, vector <duom> stud, int laikinas, int kiek)
   return stud[kiek].galutinis;
 }
 
-void Nuskaitymas(vector <duom> &stud, int &kiek, char tikrinimas)
+void Nuskaitymas(vector <duom> &stud, int &kiek, string pavadinimas, char tikrinimas)
 {
     try
     {
       float paz, s;
       ifstream df;
-      df.open("Studentai10000.txt");
+      df.open(pavadinimas);
+      if(!df) throw std::invalid_argument("Failo nuskaityti nepavyko");
       string eil;
       if (df.is_open())
       {
@@ -67,26 +68,42 @@ void Nuskaitymas(vector <duom> &stud, int &kiek, char tikrinimas)
       df.close();
     }
     catch(const exception& e){
-     cout << "Failo nuskaityti nepavyko arba failas jau nuskaitytas" << endl;
+     cout << "Failo nuskaityti nepavyko" << endl;
   }
 }
 
-void Isvedimas(vector <duom> stud, int kiek, char tikrinimas) {
+void Isvedimas(vector <duom> stud, int kiek, string pavadinimas_isv ,char tikrinimas) {
   ofstream rf;
-  rf.open("rezultatai.txt");
-  rf<<setw(20)<<left<<"Vardas"<<setw(20)<<left<<"Pavarde"<<setw(18)<<left<<"Galutinis(vid.)/"<<left<<"Galutinis(med.)\n"<< "--------------------------------------------------------------------------\n";
+  rf.open(pavadinimas_isv);
   for (int i=0; i<kiek;i++)
   {
-      rf<<setw(20)<<left<<stud[i].vardas<<setw(20)<<left<<stud[i].pavarde<<fixed<<setprecision(2)<<setw(18)<<left<<stud[i].galutinis<<endl;
+      rf<<setw(20)<<left<<stud.at(i).vardas<<setw(20)<<left<<stud.at(i).pavarde<<fixed<<setprecision(2)<<setw(18)<<left<<stud.at(i).galutinis<<endl;
   }
   rf.close();
 }
 
+void Generavimas(int dydis, string pavadinimas){
+    ofstream gf;
+    gf.open(pavadinimas);
+    int ndsk = rand() % 5 + 1;
+    gf<<setw(20)<<left<<"Vardas"<<setw(20)<<left<<"Pavarde";
+    for(int i=0;i<ndsk;i++)gf<<setw(20)<<left<<"ND" + to_string(i+1);
+    gf<<setw(20)<<left<<"Egz."<<endl;
+    for(int i=0;i<dydis;i++){
+        gf<<setw(20)<<left<<"Vardas" + to_string(i+1)<<setw(20)<<left<<"Pavarde" + to_string(i+1);
+        for(int j=0;j<ndsk;j++){
+            int paz = rand() % 10 + 1;
+            gf<<setw(20)<<left<<paz;
+        }
+        int egz = rand() % 10 + 1;
+        gf<<setw(20)<<left<<egz<<endl;
+    }
+    gf.close();
+}
+
 bool Palyginimas(duom pirmas, duom antras)
 {
-    if (pirmas.vardas != antras.vardas)
-        return pirmas.vardas > antras.vardas;
-    if (pirmas.pavarde != antras.pavarde)
-        return pirmas.pavarde > antras.pavarde;
-    return pirmas.galutinis > antras.galutinis;
+    if (pirmas.galutinis != antras.galutinis)
+        return pirmas.galutinis > antras.galutinis;
+    return pirmas.vardas > antras.vardas;
 }
