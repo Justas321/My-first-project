@@ -1,80 +1,115 @@
 #include "mylib.h"
-#include "struc.h"
+#include "Funkcijos.h"
 
-double vid_med (char tikrinimas, vector <duom> stud, int laikinas, int kiek)
+double vid_med (char tikrinimas, vector <int> &laik, int paz_sk, int egzaminas)
 {
   double vid;
   if (tolower(tikrinimas) == 'v') {
-    if (stud[kiek].pazymiai.size() == 0) vid = 0;
-    else vid = double(laikinas) / double(stud[kiek].paz_sk);
+    if (paz_sk == 0) vid = 0;
+    else vid = accumulate(laik.begin(),laik.end(),0.0)/double(paz_sk);
   }
   else
   {
-    if (stud[kiek].pazymiai.size() == 0)
+    if (paz_sk == 0)
     {
       vid = 0;
     }
     else{
-      sort(stud[kiek].pazymiai.begin(), stud[kiek].pazymiai.end());
-      if (stud[kiek].paz_sk % 2 == 0)
+      sort(laik.begin(), laik.end());
+      if (paz_sk % 2 == 0)
       {
-          vid = (stud[kiek].pazymiai[stud[kiek].paz_sk / 2 - 1] + stud[kiek].pazymiai[stud[kiek].paz_sk / 2]) / 2;
+          vid = double(laik[(paz_sk-1)/2]+laik[paz_sk/2])/2.0;
       }
       else
       {
-          vid = stud[kiek].pazymiai[stud[kiek].paz_sk / 2];
+          vid = double(laik[paz_sk/2]);
       }
     }
 
   }
-  stud[kiek].galutinis = vid * 0.4 + (double)stud[kiek].egzaminas * 0.6;
-  return stud[kiek].galutinis;
+  return vid * 0.4 + double(egzaminas) * 0.6;
 }
 
-void Nuskaitymas(vector <duom> &stud, int &kiek, string pavadinimas, char tikrinimas)
+void Nuskaitymas(vector <duom> &func, int &kiek, string pavadinimas, char tikrinimas)
 {
     try
     {
-      float paz, s;
       ifstream df;
       df.open(pavadinimas);
-      if(!df) throw std::invalid_argument("Failo nuskaityti nepavyko");
       string eil;
+      string header;
       if (df.is_open())
       {
-        int sk;
-        getline(df >> ws, eil);
-        stringstream stream(eil);
+        int sk, nd;
+        getline(df >> ws, header);
+        stringstream stream(header);
         sk = (distance(istream_iterator<string>(stream), istream_iterator<string>())) - 3;
-        while (true)
+        while (getline(df >> ws, eil))
         {
-          stud.resize(stud.size() + 1);
-          df >> stud.at(kiek).vardas;
-          if (df.eof()) { stud.pop_back(); break;}
-          df >> stud.at(kiek).pavarde;
-          stud.at(kiek).paz_sk=sk;
-          s=0;
-          for (int i = 0; i < stud.at(kiek).paz_sk; i++)
-          {
-            df >> paz;
-            s+=paz;
-            stud.at(kiek).pazymiai.push_back(paz);
-          }
-          df >> stud.at(kiek).egzaminas;
-          stud[kiek].galutinis = vid_med(tikrinimas, stud, s, kiek);
-          kiek++;
+            duom naujas;
+            stringstream stream(eil);
+            naujas.paz_sk = sk;
+            stream >> naujas.vardas>>naujas.pavarde;
+            for(int i=0;i<sk;i++){
+                stream >> nd;
+                naujas.pazymiai.push_back(nd);
+            }
+            stream >> naujas.egzaminas;
+            naujas.galutinis = vid_med(tikrinimas,naujas.pazymiai,naujas.paz_sk,naujas.egzaminas);
+            func.push_back(naujas);
         }
       }
+      else throw std::runtime_error(pavadinimas);
+      kiek = func.size();
       df.close();
     }
     catch(const exception& e){
-     cout << "Failo nuskaityti nepavyko" << endl;
+     cout << "Failo nuskaityti nepavyko: " <<e.what()<< endl;
+  }
+}
+
+void Nuskaitymas_list(list <duom> &func, int &kiek, string pavadinimas, char tikrinimas)
+{
+    try
+    {
+      ifstream df;
+      df.open(pavadinimas);
+      string eil;
+      string header;
+      if (df.is_open())
+      {
+        int sk, nd;
+        getline(df >> ws, header);
+        stringstream stream(header);
+        sk = (distance(istream_iterator<string>(stream), istream_iterator<string>())) - 3;
+        while (getline(df >> ws, eil))
+        {
+            duom naujas;
+            stringstream stream(eil);
+            naujas.paz_sk = sk;
+            stream >> naujas.vardas>>naujas.pavarde;
+            for(int i=0;i<sk;i++){
+                stream >> nd;
+                naujas.pazymiai.push_back(nd);
+            }
+            stream >> naujas.egzaminas;
+            naujas.galutinis = vid_med(tikrinimas,naujas.pazymiai,naujas.paz_sk,naujas.egzaminas);
+            func.push_back(naujas);
+        }
+      }
+      else throw std::runtime_error(pavadinimas);
+      kiek = func.size();
+      df.close();
+    }
+    catch(const exception& e){
+     cout << "Failo nuskaityti nepavyko: " <<e.what()<< endl;
   }
 }
 
 void Isvedimas(vector <duom> stud, int kiek, string pavadinimas_isv ,char tikrinimas) {
   ofstream rf;
   rf.open(pavadinimas_isv);
+  rf<<setw(20)<<left<<"Vardas"<<setw(20)<<left<<"Pavarde"<<setw(18)<<left<<"Galutinis balas"<<endl;
   for (int i=0; i<kiek;i++)
   {
       rf<<setw(20)<<left<<stud.at(i).vardas<<setw(20)<<left<<stud.at(i).pavarde<<fixed<<setprecision(2)<<setw(18)<<left<<stud.at(i).galutinis<<endl;
@@ -83,27 +118,44 @@ void Isvedimas(vector <duom> stud, int kiek, string pavadinimas_isv ,char tikrin
 }
 
 void Generavimas(int dydis, string pavadinimas){
+    stringstream buff;
     ofstream gf;
     gf.open(pavadinimas);
-    int ndsk = rand() % 5 + 1;
-    gf<<setw(20)<<left<<"Vardas"<<setw(20)<<left<<"Pavarde";
-    for(int i=0;i<ndsk;i++)gf<<setw(20)<<left<<"ND" + to_string(i+1);
-    gf<<setw(20)<<left<<"Egz."<<endl;
+    int ndsk = rand() % 10 + 1;
+    buff<<setw(20)<<left<<"Vardas"<<setw(20)<<"Pavarde";
+    for(int i=0;i<ndsk;i++)buff<<setw(20)<<"ND" + to_string(i+1);
+    buff<<setw(20)<<"Egz."<<"\n";
     for(int i=0;i<dydis;i++){
-        gf<<setw(20)<<left<<"Vardas" + to_string(i+1)<<setw(20)<<left<<"Pavarde" + to_string(i+1);
+        buff<<setw(20)<<left<<"Vardas" + to_string(i+1)<<setw(20)<<"Pavarde" + to_string(i+1);
         for(int j=0;j<ndsk;j++){
-            int paz = rand() % 10 + 1;
-            gf<<setw(20)<<left<<paz;
+            buff<<setw(20)<<(rand() % 10 + 1);
         }
-        int egz = rand() % 10 + 1;
-        gf<<setw(20)<<left<<egz<<endl;
+        buff<<setw(20)<<(rand() % 10 + 1)<<"\n";
     }
+    gf << buff.str();
+    buff.clear();
     gf.close();
+}
+
+void Skirstymas(vector <duom> &func, vector <duom> &vargsiukai, vector <duom> &galvociai){
+    for(auto &naujas:func){
+        if(naujas.galutinis < 5.00) vargsiukai.push_back(naujas);
+        else galvociai.push_back(naujas);
+    }
+    func.clear();
+}
+
+void Skirstymas_list(list <duom> &func, list <duom> &vargsiukai, list <duom> &galvociai){
+    for(auto &naujas:func){
+        if(naujas.galutinis < 5.00) vargsiukai.push_back(naujas);
+        else galvociai.push_back(naujas);
+    }
+    func.clear();
 }
 
 bool Palyginimas(duom pirmas, duom antras)
 {
     if (pirmas.galutinis != antras.galutinis)
-        return pirmas.galutinis > antras.galutinis;
-    return pirmas.vardas > antras.vardas;
+        return pirmas.galutinis < antras.galutinis;
+    return pirmas.vardas < antras.vardas;
 }

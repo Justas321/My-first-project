@@ -24,11 +24,13 @@ using std::setprecision;
 using std::vector;
 using std::ifstream;
 using std::ofstream;
+using std::getline;
 using std::ws;
 using std::istream_iterator;
 using std::distance;
 using std::stringstream;
 using std::exception;
 using std::to_string;
+using std::list;
 
 #endif // MYLIB_H_INCLUDED
