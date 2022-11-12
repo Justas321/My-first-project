@@ -68,7 +68,7 @@ void Nuskaitymas(vector <duom> &func, int &kiek, string pavadinimas, char tikrin
   }
 }
 
-void Nuskaitymas_list(list <duom> &func, int &kiek, string pavadinimas, char tikrinimas)
+void Nuskaitymas(list <duom> &func, int &kiek, string pavadinimas, char tikrinimas)
 {
     try
     {
@@ -117,6 +117,17 @@ void Isvedimas(vector <duom> stud, int kiek, string pavadinimas_isv ,char tikrin
   rf.close();
 }
 
+void Isvedimas(list <duom> func, int kiek, string pavadinimas_isv ,char tikrinimas) {
+  ofstream rf;
+  rf.open(pavadinimas_isv);
+  rf<<setw(20)<<left<<"Vardas"<<setw(20)<<left<<"Pavarde"<<setw(18)<<left<<"Galutinis balas"<<endl;
+  for(const auto& naujas:func)
+  {
+      rf<<setw(20)<<left<<naujas.vardas<<setw(20)<<left<<naujas.pavarde<<fixed<<setprecision(2)<<setw(18)<<left<<naujas.galutinis<<endl;
+  }
+  rf.close();
+}
+
 void Generavimas(int dydis, string pavadinimas){
     stringstream buff;
     ofstream gf;
@@ -142,15 +153,13 @@ void Skirstymas(vector <duom> &func, vector <duom> &vargsiukai, vector <duom> &g
         if(naujas.galutinis < 5.00) vargsiukai.push_back(naujas);
         else galvociai.push_back(naujas);
     }
-    func.clear();
 }
 
-void Skirstymas_list(list <duom> &func, list <duom> &vargsiukai, list <duom> &galvociai){
+void Skirstymas(list <duom> &func, list <duom> &vargsiukai, list <duom> &galvociai){
     for(auto &naujas:func){
         if(naujas.galutinis < 5.00) vargsiukai.push_back(naujas);
         else galvociai.push_back(naujas);
     }
-    func.clear();
 }
 
 bool Palyginimas(duom pirmas, duom antras)

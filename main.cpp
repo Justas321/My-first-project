@@ -26,56 +26,79 @@ int main()
     dydis = 1000;*/
     while(dydis <= 10000000){
         string pavadinimas = "studentai" + to_string(dydis) + ".txt";
-        string varg_isv = "vargsiukai" + to_string(dydis) + ".txt";
-        string galv_isv = "galvociai" + to_string(dydis) + ".txt";
+        string varg_isv = "vargsiukai_vector" + to_string(dydis) + ".txt";
+        string galv_isv = "galvociai_vector" + to_string(dydis) + ".txt";
+        string varg_isv2 = "vargsiukai_vector_antras" + to_string(dydis) + ".txt";
+        string galv_isv2 = "galvociai_vector_antras" + to_string(dydis) + ".txt";
         string varg_isv_list = "vargsiukai_list" + to_string(dydis) + ".txt";
         string galv_isv_list = "galvociai_list" + to_string(dydis) + ".txt";
+        string galv_isv_list2 = "galvociai_list_antras" + to_string(dydis) + ".txt";
+        string varg_isv_list2 = "vargsiukai_list_antras" + to_string(dydis) + ".txt";
         vector <duom> vargsiukai;
         vector <duom> galvociai;
+        vector <duom> vargsiukai2;
         list <duom> vargsiukai_list;
         list <duom> galvociai_list;
-        auto start11 = std::chrono::high_resolution_clock::now();
+        list <duom> vargsiukai_list2;
+        // 1 Vektoriu strategija
         Nuskaitymas(stud,kiek,pavadinimas,tikrinimas);
-        auto end11 = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> diff11 = end11 - start11;
-        auto start12 = std::chrono::high_resolution_clock::now();
+        auto startv1 = std::chrono::high_resolution_clock::now();
         sort(stud.begin(), stud.end(),Palyginimas);
-        //auto end3 = std::chrono::high_resolution_clock::now();
-        //std::chrono::duration<double> diff3 = end3 - start3;
-        //cout<<dydis<<" studentu failo surusiavimui naudojant sort prireike: "<<diff3.count()<<endl;
-        //auto start4 = std::chrono::high_resolution_clock::now();
         Skirstymas(stud, vargsiukai, galvociai);
-        auto end12 = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> diff12 = end12 - start12;
+        auto endv1 = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> diffv1 = endv1 - startv1;
         int varg_dyd = vargsiukai.size();
         int galv_dyd = galvociai.size();
-        //auto start5 = std::chrono::high_resolution_clock::now();
         Isvedimas(vargsiukai, varg_dyd, varg_isv ,tikrinimas);
-        //auto end5 = std::chrono::high_resolution_clock::now();
-        //std::chrono::duration<double> diff5 = end5 - start5;
-        //cout<<dydis<<" vargsiuku isvedimui prireike: "<<diff5.count()<<endl;
-        //auto start6 = std::chrono::high_resolution_clock::now();
         Isvedimas(galvociai, galv_dyd, galv_isv, tikrinimas);
-        //auto end6 = std::chrono::high_resolution_clock::now();
-        //std::chrono::duration<double> diff6 = end6 - start6;
-        //cout<<dydis<<" galvociu isvedimui prireike: "<<diff6.count()<<endl;
-        auto start21 = std::chrono::high_resolution_clock::now();
-        Nuskaitymas_list(stud_list,kiek,pavadinimas,tikrinimas);
-        auto end21 = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> diff21 = end21 - start21;
-        auto start22 = std::chrono::high_resolution_clock::now();
+        // 1 List strategija
+        Nuskaitymas(stud_list,kiek,pavadinimas,tikrinimas);
+        auto startL1 = std::chrono::high_resolution_clock::now();
         stud_list.sort(Palyginimas);
-        Skirstymas_list(stud_list,vargsiukai_list,galvociai_list);
-        auto end22 = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> diff22 = end22 - start22;
+        Skirstymas(stud_list,vargsiukai_list,galvociai_list);
+        auto endL1 = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> diffL1 = endL1 - startL1;
+        int varg_list_dyd = vargsiukai_list.size();
+        int galv_list_dyd = galvociai_list.size();
+        Isvedimas(vargsiukai_list, varg_list_dyd, varg_isv_list, tikrinimas);
+        Isvedimas(galvociai_list, galv_list_dyd, galv_isv_list, tikrinimas);
+        // 2 Vektoriu strategija
+        auto startv2 = std::chrono::high_resolution_clock::now();
+        sort(stud.begin(),stud.end(),Palyginimas);
+        stud.erase(remove_if(stud.begin(),stud.end(),[&vargsiukai2](duom naujas){
+            if(naujas.galutinis < 5.00){
+                vargsiukai2.push_back(naujas);
+                return true;
+                             }
+            else {return false;}
+                             }),stud.end());
+        auto endv2 = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> diffv2 = endv2 - startv2;
+        int varg_dyd2 = vargsiukai2.size();
+        int pagr_dyd = stud.size();
+        Isvedimas(vargsiukai2,varg_dyd2,varg_isv2,tikrinimas);
+        Isvedimas(stud,pagr_dyd,galv_isv2,tikrinimas);
+        // 2 List strategija
+        auto startL2 = std::chrono::high_resolution_clock::now();
+        stud_list.sort(Palyginimas);
+        stud_list.erase(remove_if(stud_list.begin(),stud_list.end(),[&vargsiukai_list2](duom naujas){
+            if(naujas.galutinis < 5.00){
+                vargsiukai_list2.push_back(naujas);
+                return true;
+                             }
+            else {return false;}
+                             }),stud_list.end());
+        auto endL2 = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> diffL2 = endL2 - endL1;
+        int varg_list_dyd2 = vargsiukai_list2.size();
+        Isvedimas(vargsiukai_list2,varg_list_dyd2,varg_isv_list2,tikrinimas);
+        Isvedimas(stud_list,pagr_dyd,galv_isv_list2,tikrinimas);
 
         cout<<"\n"<<"Veiksmai su "<<dydis<<" failu: "<<endl;
-        cout<<"\n"<<dydis<<" studentu failo nuskaitymui naudojant vector prireike: "<<diff11.count()<<endl;
-        cout<<dydis<<" studentu failo surusiavimui skirstant i vargsiukus ir galvocius naudojant vector prireike: "<<diff12.count()<<endl;
-        cout<<"Bendras sugaistas laikas: "<<diff11.count()+diff12.count()<<endl;
-        cout<<"\n"<<dydis<<" studentu failo nuskaitymui naudojant list prireike: "<<diff21.count()<<endl;
-        cout<<dydis<<" studentu failo surusiavimui skirstant i vargsiukus ir galvocius naudojant list prireike: "<<diff22.count()<<endl;
-        cout<<"Bendras sugaistas laikas: "<<diff21.count()+diff22.count()<<endl;
+        cout<<"1 Vektoriu strategija: "<<diffv1.count()<<endl;
+        cout<<"1 List strategija: "<<diffL1.count()<<endl;
+        cout<<"2 Vektoriu strategija: "<<diffv2.count()<<endl;
+        cout<<"2 List strategija: "<<diffL2.count()<<endl;
 
         dydis = dydis*10;
         stud.clear();
@@ -84,6 +107,8 @@ int main()
         stud_list.clear();
         vargsiukai_list.clear();
         galvociai_list.clear();
+        vargsiukai2.clear();
+        vargsiukai_list2.clear();
     }
     return 0;
 }
